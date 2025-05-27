@@ -23,8 +23,12 @@ public class ClassementService {
         return classementRepository.findAll();
     }
 
+    public List<Classement> findAllClassementByRankList(Integer rankListId) {
+        return classementRepository.findAllClassementByRankList(rankListId);
+    }
+
     //Renvoie un classement selon son ID
-    public Classement findById(int id){
+    public Classement findById(Integer id){
         Optional<Classement> classement = this.classementRepository.findById(id);
         return classement.orElse(null);
     }

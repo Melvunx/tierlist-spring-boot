@@ -22,12 +22,12 @@ public class RankedService {
         return rankedRepository.findAll();
     }
 
-    public List<Ranked> findAllByClassement(Classement classement) {
-        int classementId = classement.getId();
+    public List<Ranked> findAllByClassement(Integer classementId) {
+        return rankedRepository.findByClassementId(classementId);
     }
 
-    public Ranked findById(int id) {
+    public Ranked findById(Integer id) {
         Optional<Ranked> ranked = rankedRepository.findById(id);
-        return ranked.isPresent() ? ranked.get() : null;
+        return ranked.orElse(null);
     }
 }

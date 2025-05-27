@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface RankedRepository extends JpaRepository<Ranked, Integer> {
-    List<Ranked> findAllRankedByClassement(Classement classement);
+    // Méthode pour récupérer tous les ranked d'un classement spécifique
+    List<Ranked> findByClassementId(Integer classementId);
 }
