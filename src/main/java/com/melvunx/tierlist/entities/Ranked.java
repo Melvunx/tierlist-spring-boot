@@ -1,35 +1,46 @@
 package com.melvunx.tierlist.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.time.LocalDate;
 
 @AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Entity
 @Table(name = "ranked")
 public class Ranked {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
-    private int id;
-    @Getter
-    @Setter
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false)
     private int name;
-    @Getter
-    @Setter
+
     private int image;
-    @Getter
-    private String createdAt;
-    @Getter
-    @Setter
-    private String updatedAt;
 
-    public Ranked() {}
+    @Column(nullable = false)
+    private Integer classementId;
 
-    public Ranked(int id, int image, int name) {
-        this.id = id;
-        this.image = image;
-        this.name = name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "classement_id")
+    private Classement classement;
+
+    @Column(nullable = false)
+    private LocalDate createdAt;
+
+    @Column(nullable = false)
+    private LocalDate updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDate.now();
+        updatedAt = LocalDate.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDate.now();
     }
 }

@@ -1,31 +1,49 @@
 package com.melvunx.tierlist.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "classement")
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Classement {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
-    private int id;
-    @Getter
-    @Setter
-    private String title, updatedAt;
-    @Getter
-    private int rankedId;
-    @Getter
-    private String createdAt;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    public Classement() {}
+    @Column(nullable = false)
+    private String title;
 
-    public Classement(int id, String title, int rankedId) {
-        this.id = id;
-        this.title = title;
-        this.rankedId = rankedId;
+    @Column(nullable = false)
+    private Integer ranked_list_id;
+
+    @Column(nullable = false)
+    private LocalDate createdAt;
+
+    @Column(nullable = false)
+    private LocalDate updatedAt;
+
+    //Un classement peut avoir plusieurs ranked | On peut fetch les ranked seulement si l'on veut
+    @OneToMany(mappedBy = "classement", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Ranked> rankedItems;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ranked_list_id")
+    private RankList rankList;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDate.now();
+        updatedAt = LocalDate.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDate.now();
     }
 }
