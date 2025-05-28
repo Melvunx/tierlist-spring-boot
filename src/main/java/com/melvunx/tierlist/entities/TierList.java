@@ -7,23 +7,27 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "rank_list")
+@Table(name = "tier_list")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class RankList {
+public class TierList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(nullable = false)
-    private String list, author, theme;
+    private String title, author, theme;
 
-    @Column(nullable = false)
-    private LocalDate createdAt, updatedAt;
 
-    @OneToMany(mappedBy = "ranked_list", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tierList", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Classement> classements;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDate createdAt;
+
+    @Column(name =  "updated_at", nullable = false)
+    private LocalDate updatedAt;
 
     @PrePersist
     protected void onCreate() {

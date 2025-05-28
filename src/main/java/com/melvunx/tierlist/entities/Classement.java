@@ -19,22 +19,20 @@ public class Classement {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private Integer ranked_list_id;
-
-    @Column(nullable = false)
-    private LocalDate createdAt;
-
-    @Column(nullable = false)
-    private LocalDate updatedAt;
 
     //Un classement peut avoir plusieurs ranked | On peut fetch les ranked seulement si l'on veut
     @OneToMany(mappedBy = "classement", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Ranked> rankedItems;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ranked_list_id")
-    private RankList rankList;
+    @JoinColumn(name = "tier_list_id")
+    private TierList tierList;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDate createdAt;
+
+    @Column(name =  "updated_at", nullable = false)
+    private LocalDate updatedAt;
 
     @PrePersist
     protected void onCreate() {

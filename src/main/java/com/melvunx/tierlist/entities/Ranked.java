@@ -16,21 +16,18 @@ public class Ranked {
     private Integer id;
 
     @Column(nullable = false)
-    private int name;
+    private String name;
 
-    private int image;
-
-    @Column(nullable = false)
-    private Integer classementId;
+    private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "classement_id")
     private Classement classement;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 
-    @Column(nullable = false)
+    @Column(name =  "updated_at", nullable = false)
     private LocalDate updatedAt;
 
     @PrePersist
