@@ -37,13 +37,13 @@ public class ClassementService {
     }
 
     //Renvoie un classement selon son ID
-    public Classement findById(Integer classementId){
+    public Classement findClassementById(Integer classementId){
         Optional<Classement> classement = this.classementRepository.findById(classementId);
         return classement.orElse(null);
     }
 
     public void addRanked(Integer classementId, Integer rankedId){
-        Classement classement = this.findById(classementId);
+        Classement classement = this.findClassementById(classementId);
     }
 
     public void addMultipleRanked(Integer classementId, List<Integer> rankedIds) {
@@ -53,7 +53,7 @@ public class ClassementService {
     }
 
     public void update(Integer classementId, Classement newClassement) {
-       Classement classement = this.findById(classementId);
+       Classement classement = this.findClassementById(classementId);
 
        classement.setTitle(newClassement.getTitle());
 

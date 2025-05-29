@@ -1,6 +1,8 @@
 package com.melvunx.tierlist.controllers;
 
+import com.melvunx.tierlist.entities.Classement;
 import com.melvunx.tierlist.entities.Ranked;
+import com.melvunx.tierlist.services.ClassementService;
 import com.melvunx.tierlist.services.RankedService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -16,6 +18,7 @@ import java.util.List;
 @RequestMapping(path = "/ranked")
 public class RankedController {
     private final RankedService rankedService;
+    private final ClassementService classementService;
 
     @GetMapping
     public ResponseEntity<List<Ranked>> getAllRanked(@RequestParam(required = false) String sort) {
@@ -33,9 +36,9 @@ public class RankedController {
         return ResponseEntity.ok(rankedList);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Ranked> getRanked(@PathVariable Integer id) {
-        var ranked = rankedService.findById(id);
+    @GetMapping("/{rankedId}")
+    public ResponseEntity<Ranked> getRanked(@PathVariable Integer rankedId) {
+        var ranked = rankedService.findById(rankedId);
         if (ranked == null) {
             return ResponseEntity.notFound().build();
         }
@@ -68,7 +71,7 @@ public class RankedController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{rankedId}")
     public ResponseEntity<Void> updateRanked(@PathVariable Integer rankedId, @RequestBody Ranked ranked){
         var rankedServiceById = rankedService.findById(rankedId);
         if (rankedServiceById == null) {
@@ -79,14 +82,56 @@ public class RankedController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRanked(@PathVariable Integer rankedId){
-        var ranked = rankedService.findById(rankedId);
-        if (ranked == null) {
-            return ResponseEntity.notFound().build();
-        }
+    @PutMapping("/add/{rankedId}/classement/{classementId}")
+    public ResponseEntity<Void> addRankedByIdToClassement(@PathVariable Integer classementId, @PathVariable Integer rankedId) {
+        Classement classement = classementService.findClassementById(classementId);
+        Ranked ranked = rankedService.findById(rankedId);
 
-        this.rankedService.delete(rankedId);
+        if (ranked == null) return ResponseEntity.notFound().build();
+
+        if (classement == null) return ResponseEntity.notFound().build();
+
+        this.rankedService.addRankedToClassement(classement, ranked);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/multiple-add/classement/{classementId}")
+    public ResponseEntity<Void> addMultipleRankedById(@PathVariable Integer classementId, @RequestBody List<Integer> rankedIds) {
+        Classement classement = classementService.findClassementById(classementId);
+        if (classement == null) return ResponseEntity.notFound().build();
+
+        this.rankedService.addMultipleRankedToClassement(classement, rankedIds);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/remove/{rankedId}/classement/{classementId}")
+    public ResponseEntity<Void> removeRankedByIdFromClassement(@PathVariable Integer classementId, @PathVariable Integer rankedId) {
+        Classement classement = classementService.findClassementById(classementId);
+        Ranked ranked = rankedService.findById(rankedId);
+
+        if (ranked == null) return ResponseEntity.notFound().build();
+        if (classement == null) return ResponseEntity.notFound().build();
+
+        this.rankedService.removeRankedFromClassement(classement, ranked);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/multiple-remove/{rankedId}/classement/{classementId}")
+    public ResponseEntity<Void> removeMultipleRankedById(@PathVariable Integer classementId, @RequestBody List<Integer> rankedIds) {
+        Classement classement = classementService.findClassementById(classementId);
+
+        if (classement == null) return ResponseEntity.notFound().build();
+
+        this.rankedService.removeMultipleRankedFromClassement(classement, rankedIds);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{rankedId}")
+    public ResponseEntity<Void> deleteRanked(@PathVariable Integer rankedId){
+        Ranked ranked = rankedService.findById(rankedId);
+        if (ranked == null) return ResponseEntity.notFound().build();
+
+        this.rankedService.delete(ranked);
         return ResponseEntity.noContent().build();
     }
 }
