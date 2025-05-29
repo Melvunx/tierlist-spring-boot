@@ -52,15 +52,19 @@ public class RankedController {
             @RequestParam(required = false) String sort
     ) {
         List<Ranked> rankedList;
+        Classement classement = classementService.findClassementById(classementId);
+
+        if (classement == null) return ResponseEntity.notFound().build();
+
         if (sort != null && !sort.isEmpty()) {
             try {
                 Sort sortBy = Sort.by(sort);
-                rankedList = this.rankedService.findAllByClassement(classementId, sortBy);
+                rankedList = this.rankedService.findAllByClassement(classement, sortBy);
             } catch (Exception e) {
-                rankedList = this.rankedService.findAllByClassement(classementId);
+                rankedList = this.rankedService.findAllByClassement(classement);
             }
         }
-        else rankedList = this.rankedService.findAllByClassement(classementId);
+        else rankedList = this.rankedService.findAllByClassement(classement);
 
         return ResponseEntity.ok(rankedList);
     }
@@ -72,13 +76,14 @@ public class RankedController {
     }
 
     @PutMapping("/{rankedId}")
-    public ResponseEntity<Void> updateRanked(@PathVariable Integer rankedId, @RequestBody Ranked ranked){
-        var rankedServiceById = rankedService.findById(rankedId);
-        if (rankedServiceById == null) {
+    public ResponseEntity<Void> updateRanked(@PathVariable Integer rankedId, @RequestBody Ranked newRanked){
+        Ranked ranked = rankedService.findById(rankedId);
+
+        if (ranked == null) {
             return ResponseEntity.notFound().build();
         }
 
-        this.rankedService.update(rankedId, ranked);
+        this.rankedService.update(rankedId, newRanked);
         return ResponseEntity.noContent().build();
     }
 

@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface RankedRepository extends JpaRepository<Ranked, Integer> {
     // Méthode pour récupérer tous les ranked d'un classement spécifique
-    List<Ranked> findByClassementId(Integer classementId);
-    List<Ranked> findByClassementId(Integer classementId, Sort sort);
+    List<Ranked> findByClassementId(Classement classement);
+    List<Ranked> findByClassementId(Classement classement, Sort sort);
 }

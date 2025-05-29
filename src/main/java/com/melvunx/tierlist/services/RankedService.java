@@ -9,13 +9,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class RankedService {
     private final RankedRepository rankedRepository;
-    private final ClassementService classementService;
     private final ClassementRepository classementRepository;
 
     public void create(Ranked ranked) {
@@ -33,11 +33,10 @@ public class RankedService {
     }
 
     public void addMultipleRankedToClassement(Classement classement, List<Integer> rankedIds) {
-
         rankedIds.forEach(rankedId -> {
            Ranked ranked = this.findById(rankedId);
 
-           if (!classement.getRankedItems().contains(ranked)) {
+           if (ranked != null && !classement.getRankedItems().contains(ranked)) {
                classement.getRankedItems().add(ranked);
                ranked.setClassement(classement);
            }
@@ -60,7 +59,7 @@ public class RankedService {
         rankedIds.forEach(rankedId -> {
             Ranked ranked = this.findById(rankedId);
 
-            if (classement.getRankedItems().contains(ranked)) {
+            if (ranked != null && classement.getRankedItems().contains(ranked)) {
                 classement.getRankedItems().remove(ranked);
                 ranked.setClassement(null);
             }
@@ -77,12 +76,12 @@ public class RankedService {
         return rankedRepository.findAll();
     }
 
-    public List<Ranked> findAllByClassement(Integer classementId) {
-        return rankedRepository.findByClassementId(classementId);
+    public List<Ranked> findAllByClassement(Classement classement) {
+        return rankedRepository.findByClassementId(classement);
     }
 
-    public List<Ranked> findAllByClassement(Integer classementId, Sort sort) {
-        return rankedRepository.findByClassementId(classementId, sort);
+    public List<Ranked> findAllByClassement(Classement classement, Sort sort) {
+        return rankedRepository.findByClassementId(classement, sort);
     }
 
     public Ranked findById(Integer rankedId) {
@@ -91,6 +90,8 @@ public class RankedService {
     }
 
     public void update(Integer rankedId, Ranked newRanked) {
+        if (!Objects.equals(rankedId, newRanked.getId())) return;
+
         Ranked ranked = this.findById(rankedId);
 
         ranked.setName(newRanked.getName());
