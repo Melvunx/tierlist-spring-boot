@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "tier-list")
+@RequestMapping("tier-list")
 @AllArgsConstructor
 public class TierListController {
     private final TierListService tierListService;
@@ -45,6 +45,7 @@ public class TierListController {
         return ResponseEntity.ok(tierList);
     }
 
+    @PutMapping("/{tierListId}")
     public ResponseEntity<Void> updateTierList(@RequestParam Integer tierListId, @RequestBody TierList newTierList) {
         TierList tierList = this.tierListService.findById(tierListId);
         if (tierList == null) return ResponseEntity.notFound().build();
@@ -53,6 +54,7 @@ public class TierListController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{tierListId}")
     public ResponseEntity<Void> deleteTierList(@RequestParam Integer tierListId) {
         TierList tierList = this.tierListService.findById(tierListId);
         if (tierList == null) return ResponseEntity.notFound().build();
